@@ -22,3 +22,7 @@ Features:
 * Adjustable pause when changing direction.
 * Tries to fit content by reducing the fonts kerning.
 * Detects content changes and reinits the scroller.
+
+Demo: http://blog.niko-dittmann.com/Khan-Shatyr/
+
+Issues: https://github.com/niko/Khan-Shatyr/issues
