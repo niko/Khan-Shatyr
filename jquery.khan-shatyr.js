@@ -86,6 +86,6 @@
     }, custom_opts);
       
     var self = this;
-    return this.each(function() { methods.init(self, opts); });
+    return this.each(function(i, scroller) { methods.init($(scroller), opts); });
   };
 })( jQuery );
