@@ -16,7 +16,16 @@
 // * Tries to fit content by reducing the fonts kerning.
 // * Detects content changes and reinits the scroller.
 // 
+
 (function( $ ) {
+  
+  // on window resize: reinit.
+  var timer;
+  $(window).resize(function(){
+    if(timer) window.clearTimeout(timer);
+    timer = window.setTimeout(function(){ $(window).trigger('reinit_khan_shatyr'); }, 1000)
+  });
+  
   var methods = {
       // Calculates the amount of overflow of an element.
       overflowAmount: function(elm){
@@ -33,9 +42,9 @@
       condenseToFit: function(elm, max){
         var s=0.0;
         while (s >= max){
+          elm.css('letter-spacing', s+'em');
           if(this.overflowAmount(elm) <= 0) return null;
           s = s-0.003;
-          elm.css('letter-spacing', s+'em');
         }
         
         elm.css('letter-spacing', '0em');
@@ -51,10 +60,11 @@
         if(left_margin=='') left_margin = '0px';
         
         var scroll_left = function(){
-          setTimeout(function(){ elm.animate({'margin-left': -scroll_amount}, delay, easing, scroll_right); }, pause);
+          if (!elm.attr('scrolling')) return;
+          window.setTimeout(function(){ elm.stop(true); elm.animate({'margin-left': -scroll_amount}, delay, easing, scroll_right); }, pause);
         };
         var scroll_right = function(){
-          setTimeout(function(){ elm.animate({'margin-left': left_margin}, delay, easing, scroll_left); }, pause);
+          window.setTimeout(function(){ elm.stop(true); elm.animate({'margin-left': left_margin}, delay, easing, scroll_left); }, pause)
         }
         
         scroll_left();
@@ -63,16 +73,30 @@
       init: function(scroller, opts){
         var self = this;
         
-        setInterval(function(){
-          if( scroller.find('span.khan_shatyr_scroller').length!=1) self.init(scroller, opts);
-        }, 1000);                                                               // watch scroller for changes
+        // only check once for changes
+        if(!scroller.attr('khan_shatyr_checker')){
+          $(window).bind('reinit_khan_shatyr', function(){ self.init(scroller, opts); });
+          
+          scroller.attr('khan_shatyr_checker',
+            setInterval(function(){
+              if(scroller.find('span.khan_shatyr_scroller').length!=1) self.init(scroller, opts); // watch scroller for changes
+            }, 1000)
+          );
+        };
         
-        scroller.wrapInner('<span class="khan_shatyr_scroller"></span>');       // wrap the content so we can do the math
+        if( scroller.find('span.khan_shatyr_scroller').length==0 )
+          scroller.wrapInner('<span class="khan_shatyr_scroller"></span>');     // wrap the content so we can do the math
+        
+        var scrolled = scroller.find('span.khan_shatyr_scroller');
+        
+        scrolled.attr('scrolling', true);
         var scroll_amount = this.condenseToFit(scroller, opts['max_kerning']);  // try to squeeze the content into the container…
-        if(scroll_amount == null) return;                                       // … if succeeded: return.
+        if(scroll_amount == null) {                                             // … if succeeded: return.
+          scrolled.removeAttr('scrolling');
+          return;
+        }
         
-        this.scroll(scroller.find('span.khan_shatyr_scroller'),
-                  scroll_amount, opts['delay'], opts['pause'], opts['easing']); // … else scroll.
+        self.scroll(scrolled, scroll_amount, opts['delay'], opts['pause'], opts['easing']); // … else scroll.
       }
   };
   
