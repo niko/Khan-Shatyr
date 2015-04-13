@@ -23,6 +23,12 @@ Features:
 * Tries to fit content by reducing the fonts kerning.
 * Detects content changes and reinits the scroller.
 
-Demo: http://blog.niko-dittmann.com/Khan-Shatyr/
+Synopsis:
+
+```
+$(document).ready(function(){
+  $('div.demo').khanShatyr({delay: 2000, pause: 300, max_kerning: -0.05}).css('color', 'red');
+})
+```
 
 Issues: https://github.com/niko/Khan-Shatyr/issues
