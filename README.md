@@ -3,8 +3,8 @@ Khan Shatyr ("Royal Marquee") - Smooth scrolling text
 
 (see http://en.wikipedia.org/wiki/Khan_Shatyr_Entertainment_Center)
 
-Author: Niko Dittmann
-
+Author: Kai Himken
+Forked from: https://github.com/niko/Khan-Shatyr
 License: MIT
 
 Works pretty much like a marqee tag, but smoother. Uses jQuery animation for that.
@@ -31,4 +31,4 @@ $(document).ready(function(){
 })
 ```
 
-Issues: https://github.com/niko/Khan-Shatyr/issues
+Issues: https://github.com/niko/Khan-Shatyr/issues 
